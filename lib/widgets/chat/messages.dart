@@ -1,4 +1,6 @@
+import 'package:chat/widgets/chat/message_bubble.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class Messages extends StatelessWidget {
@@ -17,13 +19,16 @@ class Messages extends StatelessWidget {
           return const Center(child: CircularProgressIndicator());
         }
         final docs = snapshot.data!.docs;
+        final currentUser=FirebaseAuth.instance.currentUser;
         return  ListView.builder(
           reverse: true,
           itemCount: docs.length,
           itemBuilder: (ctx, index) =>
-              Container(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(docs[index]['text']),
+              MessageBubble(
+                docs[index]['text'],
+                docs[index]['username'],
+                docs[index]['userId']==currentUser?.uid,
+                key: ValueKey(docs[index].id),
               ),
         );
       },
